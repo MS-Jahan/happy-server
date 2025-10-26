@@ -43,7 +43,7 @@ COPY --from=builder /app/sources ./sources
 COPY --from=builder /app/prisma ./prisma
 
 # Expose the port the app will run on
-EXPOSE 3000
+EXPOSE 3005
 
 # Command to run migrations then start the app
 CMD ["sh", "-c", "yarn prisma migrate deploy && yarn start"]
