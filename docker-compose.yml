@@ -2,14 +2,14 @@ services:
   happy-server:
     build: .
     ports:
-      - "3000:3000"
+      - "3005:3005"
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/happy-server
       - REDIS_URL=redis://redis:6379
       - HANDY_MASTER_SECRET=${HANDY_MASTER_SECRET}
-      - PORT=3000
+      - PORT=3005
       - S3_HOST=minio
       - S3_PORT=9000
       - S3_USE_SSL=false
