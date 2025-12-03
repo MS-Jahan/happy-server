@@ -12,10 +12,11 @@ COPY ./prisma ./prisma
 
 # Install dependencies
 # NOTE: SSL verification is disabled during installation for environments with SSL interception.
-# For production, use proper CA certificates instead.
+# For production, use proper CA certificates instead. See ERROR_ANALYSIS.md for alternatives.
 # Both yarn strict-ssl and NODE_TLS_REJECT_UNAUTHORIZED are needed:
 # - yarn strict-ssl: for npm package downloads
 # - NODE_TLS_REJECT_UNAUTHORIZED: for Prisma binary downloads
+# Configuration is cleaned up after installation to maintain runtime security.
 RUN yarn config set strict-ssl false && \
     NODE_TLS_REJECT_UNAUTHORIZED=0 yarn install --frozen-lockfile --ignore-engines && \
     yarn config delete strict-ssl

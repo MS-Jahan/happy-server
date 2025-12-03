@@ -31,7 +31,7 @@ When running `docker compose up -d`, the Docker build process fails during the `
 
 ## Solutions
 
-### Solution 1: Disable Strict SSL (Recommended for Development Only)
+### Solution 1: Disable Strict SSL (Recommended for Development/Controlled Environments Only)
 Add the following to the Dockerfile before the `yarn install` command:
 
 ```dockerfile
@@ -99,7 +99,7 @@ For production, implement **Solution 2** or **Solution 4** depending on infrastr
 
 ## Additional Context
 
-- The error occurs at Dockerfile line 14
+- The error originally occurred during the yarn install step in the Dockerfile
 - The application is a TypeScript/Node.js backend using Fastify
 - Port changed from 3000 to 3005 in recent commit
 - Dependencies are managed with Yarn
