@@ -10,15 +10,15 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 COPY ./prisma ./prisma
 
-# Configure yarn for environments with SSL interception
-# NOTE: This disables strict SSL checking. For production, use proper CA certificates.
-RUN yarn config set strict-ssl false
-
 # Install dependencies
-# Set NODE_TLS_REJECT_UNAUTHORIZED=0 for Prisma binary downloads
-ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-RUN yarn install --frozen-lockfile --ignore-engines
-ENV NODE_TLS_REJECT_UNAUTHORIZED=1
+# NOTE: SSL verification is disabled during installation for environments with SSL interception.
+# For production, use proper CA certificates instead.
+# Both yarn strict-ssl and NODE_TLS_REJECT_UNAUTHORIZED are needed:
+# - yarn strict-ssl: for npm package downloads
+# - NODE_TLS_REJECT_UNAUTHORIZED: for Prisma binary downloads
+RUN yarn config set strict-ssl false && \
+    NODE_TLS_REJECT_UNAUTHORIZED=0 yarn install --frozen-lockfile --ignore-engines && \
+    yarn config delete strict-ssl
 
 # Copy the rest of the application code
 COPY ./tsconfig.json ./tsconfig.json

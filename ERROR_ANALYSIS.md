@@ -75,13 +75,27 @@ Run Docker build in an environment without SSL inspection/proxy.
 
 ## Implemented Fix
 
-The issue has been resolved by implementing a combination approach:
+The issue has been resolved by implementing a secure, minimal-scope approach:
 
-1. **Yarn Configuration**: Added `yarn config set strict-ssl false` to disable SSL verification for npm package downloads
-2. **Node.js Environment Variable**: Set `NODE_TLS_REJECT_UNAUTHORIZED=0` temporarily during `yarn install` to allow Prisma binary downloads
-3. **Security Reset**: Reset `NODE_TLS_REJECT_UNAUTHORIZED=1` after installation to re-enable SSL verification for runtime
+1. **Yarn Configuration**: Temporarily set `yarn config set strict-ssl false` to disable SSL verification for npm package downloads
+2. **Node.js Environment Variable**: Set `NODE_TLS_REJECT_UNAUTHORIZED=0` during `yarn install` to allow Prisma binary downloads
+3. **Security Cleanup**: Delete the yarn strict-ssl configuration after installation using `yarn config delete strict-ssl`
 
-This approach is suitable for development environments with SSL interception. For production, implement **Solution 2** or **Solution 4** depending on infrastructure capabilities.
+All three commands are combined in a single RUN instruction to minimize the security vulnerability window and ensure configuration changes don't persist in the final image.
+
+```dockerfile
+RUN yarn config set strict-ssl false && \
+    NODE_TLS_REJECT_UNAUTHORIZED=0 yarn install --frozen-lockfile --ignore-engines && \
+    yarn config delete strict-ssl
+```
+
+This approach:
+- ✅ Limits SSL bypass to only the installation step
+- ✅ Cleans up configuration after use
+- ✅ Maintains security for runtime operations
+- ✅ Suitable for development environments with SSL interception
+
+For production, implement **Solution 2** or **Solution 4** depending on infrastructure capabilities.
 
 ## Additional Context
 
